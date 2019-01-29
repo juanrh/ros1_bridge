@@ -128,6 +128,16 @@ def generate_messages(rospack=None):
             if m.package_name == 'builtin_interfaces' and m.message_name == msg_name]
         if ros1_msg and ros2_msg:
             mappings.append(Mapping(ros1_msg[0], ros2_msg[0]))
+    # add custom mapping for rcl_interfaces
+    msg_name = 'Log'
+    ros1_msg = [
+        m for m in ros1_msgs
+        if m.package_name == 'rosgraph_msgs' and m.message_name == msg_name]
+    ros2_msg = [
+        m for m in ros2_msgs
+        if m.package_name == 'rcl_interfaces' and m.message_name == msg_name]
+    if ros1_msg and ros2_msg:
+        mappings.append(Mapping(ros1_msg[0], ros2_msg[0]))
 
     for ros1_msg, ros2_msg in message_pairs:
         mapping = determine_field_mapping(ros1_msg, ros2_msg, mapping_rules)
@@ -717,6 +727,7 @@ class Mapping:
         'fields_2_to_1',
         'depends_on_ros2_messages'
     ]
+    _packages_with_custom_mappings = {'builtin_interfaces', 'rcl_interfaces'}
 
     def __init__(self, ros1_msg, ros2_msg):
         self.ros1_msg = ros1_msg
@@ -728,7 +739,8 @@ class Mapping:
     def add_field_pair(self, ros1_field, ros2_field):
         self.fields_1_to_2[ros1_field] = ros2_field
         self.fields_2_to_1[ros2_field] = ros1_field
-        if ros2_field.type.pkg_name and ros2_field.type.pkg_name != 'builtin_interfaces':
+        if ros2_field.type.pkg_name \
+            and ros2_field.type.pkg_name not in self._packages_with_custom_mappings:
             self.depends_on_ros2_messages.add(
                 Message(ros2_field.type.pkg_name, ros2_field.type.type))
 
