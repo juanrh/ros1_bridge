@@ -76,8 +76,8 @@ def generate_cpp(output_path, template_dir):
     expand_template(template_file, data_for_template, output_file)
 
     unique_package_names = set(data['ros2_package_names_msg'] + data['ros2_package_names_srv'])
-    # skip builtin_interfaces since there is a custom implementation
-    unique_package_names -= {'builtin_interfaces'}
+    # skip packages with custom implementation
+    unique_package_names -= {'builtin_interfaces', 'rcl_interfaces'}
     data['ros2_package_names'] = list(unique_package_names)
 
     template_file = os.path.join(template_dir, 'get_factory.cpp.em')
