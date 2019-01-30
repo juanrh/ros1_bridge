@@ -19,6 +19,9 @@
 #include <memory>
 #include <string>
 
+#include <stdio.h> // FIXME 
+
+
 // include ROS 1
 #include "ros/node_handle.h"
 
@@ -81,11 +84,15 @@ create_bridge_from_1_to_2(
   size_t publisher_queue_size)
 {
   auto factory = get_factory(ros1_type_name, ros2_type_name);
+  std::cout << "create_bridge_from_1_to_2: Trying to create_ros2_publisher for ros2_topic_name=" << ros2_topic_name <<  std::endl;
   auto ros2_pub = factory->create_ros2_publisher(
     ros2_node, ros2_topic_name, publisher_queue_size);
+  std::cout << "create_bridge_from_1_to_2: Success on create_ros2_publisher for ros2_topic_name=" << ros2_topic_name <<  std::endl;
 
+  std::cout << "create_bridge_from_1_to_2: Trying to create_ros1_subscriber for ros1_topic_name=" << ros1_topic_name <<  std::endl;
   auto ros1_sub = factory->create_ros1_subscriber(
     ros1_node, ros1_topic_name, subscriber_queue_size, ros2_pub);
+  std::cout << "create_bridge_from_1_to_2: Success on create_ros1_subscriber for ros1_topic_name=" << ros1_topic_name <<  std::endl;
 
   Bridge1to2Handles handles;
   handles.ros1_subscriber = ros1_sub;
@@ -106,11 +113,15 @@ create_bridge_from_2_to_1(
   rclcpp::PublisherBase::SharedPtr ros2_pub = nullptr)
 {
   auto factory = get_factory(ros1_type_name, ros2_type_name);
+  std::cout << "create_bridge_from_2_to_1: Trying to create_ros1_publisher for ros1_topic_name=" << ros1_topic_name <<  std::endl;
   auto ros1_pub = factory->create_ros1_publisher(
     ros1_node, ros1_topic_name, publisher_queue_size);
+  std::cout << "create_bridge_from_2_to_1: Success on create_ros1_publisher for ros1_topic_name=" << ros1_topic_name <<  std::endl;
 
+  std::cout << "create_bridge_from_2_to_1: Trying to create_ros2_subscriber for ros2_topic_name=" << ros2_topic_name <<  std::endl;
   auto ros2_sub = factory->create_ros2_subscriber(
     ros2_node, ros2_topic_name, subscriber_queue_size, ros1_pub, ros2_pub);
+  std::cout << "create_bridge_from_2_to_1: Success on create_ros2_subscriber for ros2_topic_name=" << ros2_topic_name <<  std::endl;
 
   Bridge2to1Handles handles;
   handles.ros2_subscriber = ros2_sub;

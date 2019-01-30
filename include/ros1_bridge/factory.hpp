@@ -18,6 +18,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <stdio.h> // FIXME 
 
 #include "rmw/rmw.h"
 
@@ -169,6 +170,7 @@ protected:
     const std::string & ros2_type_name,
     rclcpp::PublisherBase::SharedPtr ros2_pub = nullptr)
   {
+    std::cout << "ros2_callback: start " << std::endl;
     if (ros2_pub) {
       bool result = false;
       auto ret = rmw_compare_gids_equal(&msg_info.publisher_gid, &ros2_pub->get_gid(), &result);

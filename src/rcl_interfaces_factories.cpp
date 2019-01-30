@@ -16,6 +16,7 @@
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
+#include <stdio.h> // FIXME 
 
 // include rcl interfaces
 #include "ros1_bridge/rcl_interfaces_factories.hpp"
@@ -53,12 +54,23 @@ Factory<
   rcl_interfaces::msg::Log & ros2_msg)
 {
   ros1_bridge::convert_1_to_2(ros1_msg.header.stamp, ros2_msg.stamp);
-  ros2_msg.level = ros1_msg.level;
+  // ros2_msg.level = ros1_msg.level; // FIXME this doesn't work 
+  ros2_msg.level = rcl_interfaces::msg::Log::INFO;
   ros2_msg.name = ros1_msg.name;
   ros2_msg.msg = ros1_msg.msg;
   ros2_msg.file = ros1_msg.file;
   ros2_msg.function = ros1_msg.function;
   ros2_msg.line = ros1_msg.line;
+
+  std::cout << "Converted to rcl_interfaces::msg::Log with "
+    << "stamp=[(" << ros2_msg.stamp.sec << ", " << ros2_msg.stamp.nanosec << ")"
+    << "], level=[" << ros2_msg.level 
+    << "], name=[" << ros2_msg.name << "]"
+    << "], msg=[" << ros2_msg.msg << "]"
+    << "], file=[" << ros2_msg.file << "]"
+    << "], function=[" << ros2_msg.function << "]"
+    << "], line=[" << ros2_msg.line << "]"
+    << std::endl;
 }
 
 template<>
@@ -72,11 +84,24 @@ Factory<
 {
   ros1_bridge::convert_2_to_1(ros2_msg.stamp, ros1_msg.header.stamp);
   ros1_msg.level = ros2_msg.level;
-  ros1_msg.name = ros2_msg.name;
+  ros1_msg.name = ros2_msg.name.c_str();
   ros1_msg.msg = ros2_msg.msg;
   ros1_msg.file = ros2_msg.file;
   ros1_msg.function = ros2_msg.function;
   ros1_msg.line = ros2_msg.line;
+
+    std::cout << "Converted to rosgraph_msgs::Log with "
+    << "header.seq=[" << ros1_msg.header.seq 
+    << "], header.stamp=[(" << ros1_msg.header.stamp.sec << ", " << ros1_msg.header.stamp.nsec << ")"
+    << "], header.frame_id=[" << ros1_msg.header.frame_id 
+    << "], level=[" << ros1_msg.level 
+    << "], name=[" << ros1_msg.name << "]"
+    << "], msg=[" << ros1_msg.msg << "]"
+    << "], file=[" << ros1_msg.file << "]"
+    << "], function=[" << ros1_msg.function << "]"
+    << "], line=[" << ros1_msg.line << "]"
+    << "], topics.size=[" << ros1_msg.topics.size() << "]"
+    << std::endl;
 }
 
 }  // namespace ros1_bridge
